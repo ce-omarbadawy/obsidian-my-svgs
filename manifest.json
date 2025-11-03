@@ -1,11 +1,12 @@
 {
   "id": "my-svgs",
   "name": "My SVGs",
-  "version": "0.0.1",
+  "author": "Omar Badawy",
+  "version": "1.0.0",
   "minAppVersion": "1.9.0",
   "description": "Registers your own SVGs into Obsidian's global icon library for use with other plugins or however you want.",
-  "author": "Omar Badawy",
   "authorUrl": "https://github.com/ce-omarbadawy",
+  "fundingUrl": "https://buymeacoffee.com/omarbadawy",
   "isDesktopOnly": false,
   "css": "styles.css"
 }
