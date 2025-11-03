@@ -17,8 +17,8 @@ This is a straightforward plugin that allows you to use custom SVG icons in your
 
 ## Installation
 
-1. If it doesn't already exist, Create an `icons` folder in your plugin directory: `.obsidian/plugins/my-svgs/icons/`
-2. Add your SVG files to the icons folder (I already added examples i made myself 😄)
+1. If it doesn't already exist, Create an `icons` folder in your plugin directory: `"YourVaultName"/.obsidian/plugins/my-svgs/icons/`
+2. Add your SVG files to the icons folder
 3. Use the reload button to load your icons
 4. Icons become available as `my-filename` (customizable prefix)
 
