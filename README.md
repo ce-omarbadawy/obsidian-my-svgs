@@ -54,10 +54,6 @@ The plugin processes SVGs to ensure compatibility with Obsidian's icon system:
 
 This is a basic but functional plugin. Contributions are welcome since I probably won't update much. I'm happy with it as it is for my uses.
 
-## License
-
-All rights reserved
-
 ##   Sponsor this project
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/omarbadawy)
 
