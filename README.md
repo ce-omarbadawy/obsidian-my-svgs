@@ -63,4 +63,4 @@ All rights reserved
 
 ## Disclaimer
 
-This plugin is provided as-is. Users should be cautious when adding SVG files from untrusted sources, They are scriptable and dangerous. The plugin performs basic SVG processing but does not guarantee your vault won't explode.
+This plugin is provided as-is. Users should be cautious when adding SVG files from untrusted sources, They are scriptable and dangerous. The plugin performs basic SVG processing but does not guarantee your vault won't explode. Please don't blame me if anything goes wrong. I'm actively using this myself and I don't have any issues.
