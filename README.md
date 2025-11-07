@@ -1,7 +1,7 @@
 # My SVGs Plugin for Obsidian
 I made this because I couldn't find any alternatives whatsoever. It triggered a brain-itch that I couldn't get rid of. So, I hope this helps someone that needs it.
 
-This is a straightforward plugin that allows you to use custom SVG icons in your Obsidian vault. Load your own SVG icons and use them anywhere Obsidian accepts icon references. The code is terrible. I used lots of AI making this so I don't expect it to be flawless... But it works.
+This is a straightforward plugin that allows you to use custom SVG icons in your Obsidian vault. Load your own SVG icons and use them anywhere Obsidian accepts icon references. The code is of course not the best. I used lots of AI making this so I don't expect it to be flawless... But it works and I tried what I can to get it to be safe and user-friendly.
 
 ## Features
 
@@ -32,19 +32,11 @@ The plugin processes SVGs to ensure compatibility with Obsidian's icon system:
 - Converts style-based fills/strokes to attributes
 - Replaces black colors with `currentColor` for theme support
 
-### Known Limitations
-
-1. No support for nested folders in the icons directory
-2. Limited SVG animation support
-3. No automatic reload when files change (manual reload required)
-4. Basic SVG processing might not handle all complex SVG features
-5. No batch operations for icon management
-
 ### Areas for Improvement
 
    - No built-in way to delete or rename icons
-   - Cannot organize icons in subfolders
-   - No drag-and-drop support
+   - No automatic reload when files change (manual reload required)
+   - No support for nested folders in the icons directory
    - Could be optimized for large icon collections
    - Basic SVG sanitization could be more comprehensive
    - No validation of SVG content beyond basic processing
@@ -52,7 +44,7 @@ The plugin processes SVGs to ensure compatibility with Obsidian's icon system:
 
 ## Contributing
 
-This is a basic but functional plugin. Contributions are welcome since I probably won't update much. I'm happy with it as it is for my uses.
+This is a basic but functional plugin. Contributions are welcome since I probably won't update much because I don't think it needs much. I'm happy with it as it is.
 
 ##   Sponsor this project
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/omarbadawy)
