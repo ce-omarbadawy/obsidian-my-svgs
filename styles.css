@@ -1,16 +1,16 @@
-.setting-item:first-of-type {
+.my-svgs-plugin .setting-item:first-of-type {
   border-top: none;
 }
 
-.setting-item {
+.my-svgs-plugin .setting-item {
   margin-bottom: 1.5rem;
 }
 
-.setting-item-description {
+.my-svgs-plugin .setting-item-description {
   margin-bottom: 1rem;
 }
 
-.instructions-section {
+.my-svgs-instructions-section {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
@@ -18,24 +18,24 @@
   margin-bottom: 1.5rem;
 }
 
-.instructions-section h3 {
+.my-svgs-instructions-section .my-svgs-setting-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   color: var(--text-normal);
   font-size: 1rem;
 }
 
-.instructions-section ol {
+.my-svgs-instructions-section ol {
   margin: 0;
   padding-left: 1.5rem;
 }
 
-.instructions-section li {
+.my-svgs-instructions-section li {
   margin-bottom: 0.5rem;
   line-height: 1.5;
 }
 
-.instructions-section code {
+.my-svgs-instructions-section code {
   background: var(--background-primary);
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
@@ -43,7 +43,11 @@
   color: var(--text-accent);
 }
 
-.grid-section {
+.my-svgs-tip {
+  margin-top: 1em;
+}
+
+.my-svgs-grid-section {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
@@ -51,56 +55,58 @@
   margin-top: 1.5rem;
 }
 
-.grid-section h3 {
+.my-svgs-grid-section .my-svgs-setting-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   color: var(--text-normal);
   font-size: 1rem;
 }
-.svg-icons-grid {
-  margin-top: 0;
+
+.my-svgs-grid-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
-.grid-header {
+.my-svgs-grid-header {
   margin-bottom: 0.5rem;
   padding: 0.5rem 0;
 }
 
-.title-row {
+.my-svgs-title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
 }
 
-.title-right {
+.my-svgs-title-right {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.grid-title {
+.my-svgs-grid-title {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-normal);
   margin: 0;
 }
 
-.icon-count {
-  font-size: 0.8rem;
+.my-svgs-icon-count {
+  font-size: 1rem;
   color: var(--text-muted);
   background: var(--background-modifier-border);
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
 }
 
-.search-container {
+.my-svgs-search-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.icon-search-input {
+.my-svgs-icon-search-input {
   width: 100%;
   padding: 0.5rem 2.5rem 0.5rem 0.75rem;
   border: 1px solid var(--background-modifier-border);
@@ -111,17 +117,17 @@
   transition: all 0.2s ease;
 }
 
-.icon-search-input:focus {
+.my-svgs-icon-search-input:focus {
   outline: none;
   border-color: var(--interactive-accent);
   box-shadow: 0 0 0 2px var(--interactive-accent-hover, rgba(0, 0, 0, 0.1));
 }
 
-.icon-search-input::placeholder {
+.my-svgs-icon-search-input::placeholder {
   color: var(--text-muted);
 }
 
-.clear-search-btn {
+.my-svgs-clear-search-btn {
   position: absolute;
   right: 0.5rem;
   background: none;
@@ -139,12 +145,16 @@
   height: 20px;
 }
 
-.clear-search-btn:hover {
+.my-svgs-clear-search-btn[data-hidden="true"] {
+  display: none;
+}
+
+.my-svgs-clear-search-btn:hover {
   background: var(--background-modifier-border);
   color: var(--text-normal);
 }
 
-.icons-grid {
+.my-svgs-icons-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
@@ -159,25 +169,25 @@
 }
 
 /* Custom scrollbar for the grid */
-.icons-grid::-webkit-scrollbar {
+.my-svgs-icons-grid::-webkit-scrollbar {
   width: 8px;
 }
 
-.icons-grid::-webkit-scrollbar-track {
+.my-svgs-icons-grid::-webkit-scrollbar-track {
   background: var(--background-modifier-border);
   border-radius: 4px;
 }
 
-.icons-grid::-webkit-scrollbar-thumb {
+.my-svgs-icons-grid::-webkit-scrollbar-thumb {
   background: var(--interactive-accent);
   border-radius: 4px;
 }
 
-.icons-grid::-webkit-scrollbar-thumb:hover {
+.my-svgs-icons-grid::-webkit-scrollbar-thumb:hover {
   background: var(--interactive-accent-hover);
 }
 
-.icon-card {
+.my-svgs-icon-card {
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
   padding: 1rem;
@@ -188,17 +198,21 @@
   cursor: pointer;
 }
 
-.icon-card:hover {
+.my-svgs-icon-card[data-hidden="true"] {
+  display: none;
+}
+
+.my-svgs-icon-card:hover {
   transform: translateY(-2px) scale(1.05);
   animation: themeGlow 3s ease-in-out infinite;
 }
 
-.icon-card:hover .icon-preview {
+.my-svgs-icon-card:hover .my-svgs-icon-preview {
   transform: scale(1.2);
   animation: themeGlow 3s ease-in-out infinite;
 }
 
-.icon-card:hover .icon-preview svg {
+.my-svgs-icon-card:hover .my-svgs-icon-preview svg {
   transform: scale(1.1);
   color: inherit;
   filter: drop-shadow(0 0 20px currentColor);
@@ -258,12 +272,12 @@
   }
 }
 
-.icon-card.error {
+.my-svgs-icon-card.error {
   border-color: var(--text-error);
   background: var(--background-modifier-error);
 }
 
-.icon-preview {
+.my-svgs-icon-preview {
   width: 48px;
   height: 48px;
   margin: 0 auto 0.5rem;
@@ -277,7 +291,7 @@
   overflow: hidden;
 }
 
-.icon-preview svg {
+.my-svgs-icon-preview svg {
   width: 32px;
   height: 32px;
   color: var(--text-normal);
@@ -287,7 +301,7 @@
 }
 
 /* Fallback for when SVG fails to load */
-.icon-preview div {
+.my-svgs-icon-preview div {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,7 +310,7 @@
   color: var(--text-muted);
 }
 
-.icon-name {
+.my-svgs-icon-name {
   font-family: var(--font-monospace);
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -305,13 +319,13 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.icon-card:hover .icon-name {
+.my-svgs-icon-card:hover .my-svgs-icon-name {
   color: var(--text-normal);
   font-weight: 500;
   transform: translateY(-1px);
 }
 
-.copy-button {
+.my-svgs-copy-button {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
   border: none;
@@ -323,7 +337,7 @@
   opacity: 0.8;
 }
 
-.refresh-grid-btn {
+.my-svgs-refresh-grid-btn {
   background: var(--background-modifier-border);
   color: var(--text-muted);
   border: none;
@@ -339,25 +353,25 @@
   height: 24px;
 }
 
-.refresh-grid-btn:hover {
+.my-svgs-refresh-grid-btn:hover {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
   transform: scale(1.1);
 }
 
-.copy-button:hover {
+.my-svgs-copy-button:hover {
   background: var(--interactive-accent-hover);
   opacity: 1;
   transform: translateY(-1px) scale(1.05);
   box-shadow: 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.2));
 }
 
-.icon-card:hover .copy-button {
+.my-svgs-icon-card:hover .my-svgs-copy-button {
   opacity: 1;
 }
 
-.no-icons-message,
-.error-message {
+.my-svgs-no-icons-message,
+.my-svgs-error-message {
   text-align: center;
   color: var(--text-muted);
   font-style: italic;
@@ -369,43 +383,43 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .icons-grid {
+  .my-svgs-icons-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.75rem;
     max-height: 300px;
     padding: 0.75rem;
   }
 
-  .icon-card {
+  .my-svgs-icon-card {
     padding: 0.75rem;
   }
 
-  .icon-preview {
+  .my-svgs-icon-preview {
     width: 40px;
     height: 40px;
   }
 
-  .icon-preview svg {
+  .my-svgs-icon-preview svg {
     width: 24px;
     height: 24px;
   }
 
-  .title-row {
+  .my-svgs-title-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .icon-count {
+  .my-svgs-icon-count {
     align-self: flex-end;
   }
 
-  .search-container {
+  .my-svgs-search-container {
     margin-top: 0.5rem;
   }
 }
 
-.icons-grid:empty::before {
+.my-svgs-icons-grid:empty::before {
   content: "No icons found";
   display: flex;
   align-items: center;
@@ -415,19 +429,19 @@
   font-style: italic;
 }
 
-.icon-card:hover .icon-preview {
+.my-svgs-icon-card:hover .my-svgs-icon-preview {
   box-shadow: 0 0 20px
     var(--interactive-accent-hover, var(--interactive-accent));
 }
 
-.icon-card {
+.my-svgs-icon-card {
   box-shadow: 0 1px 3px var(--shadow-color, rgba(0, 0, 0, 0.1));
 }
 
-.icon-card:hover {
+.my-svgs-icon-card:hover {
   box-shadow: 0 4px 16px var(--shadow-color, rgba(0, 0, 0, 0.15));
 }
 
-.icons-grid {
+.my-svgs-icons-grid {
   scroll-behavior: smooth;
 }

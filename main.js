@@ -10,8 +10,6 @@ const {
 module.exports = class SvgIconsPlugin extends Plugin {
   settings = {
     iconPrefix: "my-",
-    showReloadButton: true,
-    hasShownLoadedNotice: false,
   };
 
   async onload() {
@@ -19,30 +17,12 @@ module.exports = class SvgIconsPlugin extends Plugin {
 
     this.addSettingTab(new SvgIconsSettingTab(this.app, this));
 
-    if (this.settings.showReloadButton) {
-      this.addRibbonIcon("refresh-cw", "Reload My SVGs", async () => {
-        await this.reloadIcons();
-      });
-    }
-
     await this.loadPluginIcons();
-
-    if (!this.settings.hasShownLoadedNotice) {
-      new Notice("My SVGs plugin loaded");
-      this.settings.hasShownLoadedNotice = true;
-      try {
-        await this.saveSettings();
-      } catch (e) {
-        console.error("Failed to save settings after showing initial notice:", e);
-      }
-    }
   }
 
   async loadPluginIcons() {
     try {
-      const iconsPath = normalizePath(
-        `${this.app.vault.configDir}/plugins/${this.manifest.id}/icons`
-      );
+      const iconsPath = normalizePath(`${this.manifest.dir}/icons`);
 
       const dirExists = await this.app.vault.adapter.exists(iconsPath);
       if (!dirExists) {
@@ -87,7 +67,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
     if (!processed.includes('xmlns="http://www.w3.org/2000/svg"')) {
       processed = processed.replace(
         "<svg",
-        '<svg xmlns="http://www.w3.org/2000/svg"'
+        '<svg xmlns="http://www.w3.org/2000/svg"',
       );
     }
 
@@ -137,7 +117,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
           if (x !== "0" || y !== "0") {
             processed = processed.replace(
               /viewBox="[^"]+"/,
-              `viewBox="0 0 ${width} ${height}"`
+              `viewBox="0 0 ${width} ${height}"`,
             );
           }
         }
@@ -149,7 +129,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
         const height = sizeMatch[2].replace("px", "");
         processed = processed.replace(
           "<svg",
-          `<svg viewBox="0 0 ${width} ${height}"`
+          `<svg viewBox="0 0 ${width} ${height}"`,
         );
       } else {
         processed = processed.replace("<svg", '<svg viewBox="0 0 24 24"');
@@ -174,7 +154,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
     if (!processed.includes('xmlns="http://www.w3.org/2000/svg"')) {
       processed = processed.replace(
         "<svg",
-        '<svg xmlns="http://www.w3.org/2000/svg"'
+        '<svg xmlns="http://www.w3.org/2000/svg"',
       );
     }
 
@@ -217,7 +197,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
           if (x !== "0" || y !== "0") {
             processed = processed.replace(
               /viewBox="[^"]+"/,
-              `viewBox="0 0 ${width} ${height}"`
+              `viewBox="0 0 ${width} ${height}"`,
             );
           }
         }
@@ -229,7 +209,7 @@ module.exports = class SvgIconsPlugin extends Plugin {
         const height = sizeMatch[2].replace("px", "");
         processed = processed.replace(
           "<svg",
-          `<svg viewBox="0 0 ${width} ${height}"`
+          `<svg viewBox="0 0 ${width} ${height}"`,
         );
       } else {
         processed = processed.replace("<svg", '<svg viewBox="0 0 24 24"');
@@ -262,13 +242,12 @@ module.exports = class SvgIconsPlugin extends Plugin {
     }
   }
 
-  onunload() {
-    console.log("Unloading My SVGs plugin");
-  }
+  onunload() {}
 };
 
 class SvgIconsSettingTab extends PluginSettingTab {
   plugin;
+  gridContainer;
 
   constructor(app, plugin) {
     super(app, plugin);
@@ -279,12 +258,12 @@ class SvgIconsSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "My SVGs Settings" });
+    containerEl.addClass("my-svgs-plugin");
 
     new Setting(containerEl)
-      .setName("Icon Prefix")
+      .setName("Icon prefix")
       .setDesc(
-        "Prefix for all loaded SVG icons (e.g., 'my-' becomes 'my-filename')"
+        "Prefix for all loaded SVG icons (e.g., 'my-' becomes 'my-filename')",
       )
       .addText((text) =>
         text
@@ -293,91 +272,106 @@ class SvgIconsSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.iconPrefix = value;
             await this.plugin.saveSettings();
-          })
+          }),
       );
 
     const instructionsSection = containerEl.createEl("div", {
-      cls: "instructions-section",
+      cls: "my-svgs-instructions-section",
     });
-    instructionsSection.createEl("h3", { text: "Instructions" });
+
+    new Setting(instructionsSection).setHeading().setName("Instructions");
+
     const instructions = instructionsSection.createEl("div", {
-      cls: "setting-item-description",
+      cls: "my-svgs-setting-item-description",
     });
-    instructions.innerHTML = `
-      <div class="setting-item-description" style="margin-bottom: 1em;">
-        How to add your custom SVG icons:
-      </div>
-      <ol>
-        <li>Find your Obsidian vault folder on your computer</li>
-        <li>Navigate to the hidden <code>.obsidian</code> folder inside your vault</li>
-        <li>Go to <code>.obsidian/plugins/my-svgs/icons/</code> folder (create the <code>icons</code> folder if it doesn't exist)</li>
-        <li>Copy your SVG files into this folder</li>
-        <li>Click the "Reload Now" button below to load your new icons</li>
-      </ol>
-      <div class="setting-item-description" style="margin-top: 1em;">
-        How to use your icons:
-      </div>
-      <ol>
-        <li>Your icons will appear in the grid below after reloading</li>
-        <li>Each icon will be named as <code>${this.plugin.settings.iconPrefix}filename</code> (example: if your file is <code>home.svg</code>, the icon will be <code>${this.plugin.settings.iconPrefix}home</code>)</li>
-        <li>Use the search box to find specific icons</li>
-        <li>Click the copy button on any icon to copy its name for use in your notes</li>
-        <li>If you don't see your icons, click the refresh button (🔄) above the grid</li>
-      </ol>
-      <div class="setting-item-description" style="margin-top: 1em; color: var(--text-muted);">
-        💡 Tip: Can't find the <code>.obsidian</code> folder? It might be hidden. On Windows, enable "Show hidden files" in File Explorer. On Mac/Linux, press Cmd+Shift+. (dot) or Ctrl+H to show hidden files.
-      </div>
-    `;
+
+    const addInstructionsHeading = (text) => {
+      instructions.createEl("div", {
+        cls: "my-svgs-setting-item-description",
+        text: text,
+      });
+    };
+
+    addInstructionsHeading("How to add your custom SVG icons:");
+    const list1 = instructions.createEl("ol");
+    list1.createEl("li", {
+      text: "Find your Obsidian vault folder on your device",
+    });
+    list1.createEl("li", {
+      text: "Navigate to the hidden .obsidian folder inside your vault",
+    });
+    list1.createEl("li", {
+      text: "Go to .obsidian/plugins/my-svgs/icons/ folder (create the icons folder if it doesn't exist)",
+    });
+    list1.createEl("li", { text: "Copy your SVG files into this folder" });
+    list1.createEl("li", {
+      text: 'Click the "Reload Now" button to load your new icons',
+    });
+
+    addInstructionsHeading("How to use your icons:");
+    const list2 = instructions.createEl("ol");
+    list2.createEl("li", {
+      text: "Your icons will appear in the grid below after reloading",
+    });
+    list2.createEl("li", {
+      text: `Each icon will be named as ${this.plugin.settings.iconPrefix}filename (example: if your file is home.svg, the icon will be ${this.plugin.settings.iconPrefix}home)`,
+    });
+    list2.createEl("li", { text: "Use the search box to find specific icons" });
+    list2.createEl("li", {
+      text: "Click the copy button on any icon to copy its name for use in your notes",
+    });
+    list2.createEl("li", {
+      text: 'If you don\'t see your icons, click the "Reload Now" button above the grid',
+    });
+
+    const tipContainer = instructions.createEl("div", {
+      cls: "my-svgs-setting-item-description my-svgs-tip",
+    });
+    tipContainer.createEl("strong", { text: "💡 Tip:" });
+    tipContainer.createSpan({
+      text: ' Can\'t find the .obsidian folder? It might be hidden. On Windows, enable "Show hidden files" in File Explorer. On Mac/Linux, press Cmd+Shift+. (dot) or Ctrl+H to show hidden files.',
+    });
 
     new Setting(containerEl)
-      .setName("Show Reload Button")
-      .setDesc("Show reload button in the ribbon")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showReloadButton)
-          .onChange(async (value) => {
-            this.plugin.settings.showReloadButton = value;
-            await this.plugin.saveSettings();
-
-            new Notice("Reload the plugin to see ribbon button changes");
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Reload Icons")
+      .setName("Reload icons")
       .setDesc("Manually reload all SVG icons from the icons folder")
       .addButton((button) =>
         button
-          .setButtonText("Reload Now")
+          .setButtonText("Reload now")
           .setCta()
           .onClick(async () => {
             await this.plugin.reloadIcons();
-          })
+            this.gridContainer.empty();
+            this.displayIconsGrid(this.gridContainer);
+          }),
       );
 
-    const gridSection = containerEl.createEl("div", { cls: "grid-section" });
-    gridSection.createEl("h3", { text: "Imported SVG Icons" });
-    const gridContainer = gridSection.createEl("div", {
-      cls: "svg-icons-grid",
+    const gridSection = containerEl.createEl("div", {
+      cls: "my-svgs-grid-section",
     });
+    const gridContainer = gridSection.createEl("div", {
+      cls: "my-svgs-grid-wrapper",
+    });
+    this.gridContainer = gridContainer;
 
     this.displayIconsGrid(gridContainer);
   }
 
   async displayIconsGrid(container) {
     try {
-      const iconsPath = normalizePath(
-        `${this.app.vault.configDir}/plugins/${this.plugin.manifest.id}/icons`
-      );
+      const iconsPath = normalizePath(`${this.plugin.manifest.dir}/icons`);
 
       const dirExists = await this.app.vault.adapter.exists(iconsPath);
       if (!dirExists) {
-        container.innerHTML = `
-          <div class="no-icons-message">
-            <p>Icons directory not found: <code>${iconsPath}</code></p>
-            <p>Please ensure the icons folder exists and contains SVG files.</p>
-          </div>
-        `;
+        const errorMsg = container.createEl("div", {
+          cls: "my-svgs-no-icons-message",
+        });
+        errorMsg.createEl("p", {
+          text: `Icons directory not found: ${iconsPath}`,
+        });
+        errorMsg.createEl("p", {
+          text: "Please ensure the icons folder exists and contains SVG files.",
+        });
         return;
       }
 
@@ -385,52 +379,51 @@ class SvgIconsSettingTab extends PluginSettingTab {
       const svgFiles = files.files.filter((file) => file.endsWith(".svg"));
 
       if (svgFiles.length === 0) {
-        container.innerHTML = `
-          <div class="no-icons-message">
-            <p>No SVG files found in the icons folder.</p>
-            <p>Add some SVG files to <code>${iconsPath}</code> and reload.</p>
-          </div>
-        `;
+        const errorMsg = container.createEl("div", {
+          cls: "my-svgs-no-icons-message",
+        });
+        errorMsg.createEl("p", {
+          text: "No SVG files found in the icons folder.",
+        });
+        errorMsg.createEl("p", {
+          text: `Add some SVG files to ${iconsPath} and reload.`,
+        });
         return;
       }
 
-      const header = container.createEl("div", { cls: "grid-header" });
+      const header = container.createEl("div", { cls: "my-svgs-grid-header" });
 
-      const titleRow = header.createEl("div", { cls: "title-row" });
+      const titleRow = header.createEl("div", { cls: "my-svgs-title-row" });
       titleRow.createEl("h4", {
-        cls: "grid-title",
+        cls: "my-svgs-grid-title",
         text: "Available SVGs",
       });
 
-      const rightSection = titleRow.createEl("div", { cls: "title-right" });
+      const rightSection = titleRow.createEl("div", {
+        cls: "my-svgs-title-right",
+      });
       const countBadge = rightSection.createEl("span", {
-        cls: "icon-count",
+        cls: "my-svgs-icon-count",
         text: `${svgFiles.length} icons`,
       });
 
-      const refreshBtn = rightSection.createEl("button", {
-        cls: "refresh-grid-btn",
-        text: "🔄",
-        title: "Refresh Grid",
-      });
-
       const searchContainer = header.createEl("div", {
-        cls: "search-container",
+        cls: "my-svgs-search-container",
       });
       const searchInput = searchContainer.createEl("input", {
         type: "text",
         placeholder: "Search icons...",
-        cls: "icon-search-input",
+        cls: "my-svgs-icon-search-input",
       });
 
       const clearBtn = searchContainer.createEl("button", {
-        cls: "clear-search-btn",
+        cls: "my-svgs-clear-search-btn",
         text: "✕",
         title: "Clear search",
       });
-      clearBtn.style.display = "none";
+      clearBtn.setAttribute("data-hidden", "true");
 
-      const grid = container.createEl("div", { cls: "icons-grid" });
+      const grid = container.createEl("div", { cls: "my-svgs-icons-grid" });
 
       const allIconCards = [];
 
@@ -440,11 +433,11 @@ class SvgIconsSettingTab extends PluginSettingTab {
 
         allIconCards.forEach((card) => {
           const iconName = card
-            .querySelector(".icon-name")
+            .querySelector(".my-svgs-icon-name")
             .textContent.toLowerCase();
           const isVisible = iconName.includes(term);
 
-          card.style.display = isVisible ? "block" : "none";
+          card.setAttribute("data-hidden", isVisible ? "false" : "true");
           if (isVisible) visibleCount++;
         });
 
@@ -452,7 +445,7 @@ class SvgIconsSettingTab extends PluginSettingTab {
           ? `${visibleCount} of ${svgFiles.length} icons`
           : `${svgFiles.length} icons`;
 
-        clearBtn.style.display = term ? "block" : "none";
+        clearBtn.setAttribute("data-hidden", term ? "false" : "true");
       };
 
       searchInput.addEventListener("input", (e) => {
@@ -470,29 +463,32 @@ class SvgIconsSettingTab extends PluginSettingTab {
           const fileName = filePath.split("/").pop().replace(".svg", "");
           const iconName = `${this.plugin.settings.iconPrefix}${fileName}`;
 
-          const card = grid.createEl("div", { cls: "icon-card" });
+          const card = grid.createEl("div", { cls: "my-svgs-icon-card" });
           allIconCards.push(card);
 
-          const preview = card.createEl("div", { cls: "icon-preview" });
+          const preview = card.createEl("div", { cls: "my-svgs-icon-preview" });
 
           try {
             const svgContent = await this.app.vault.adapter.read(filePath);
             const processedSvg = this.plugin.processSvgForPreview(svgContent);
-            preview.innerHTML = processedSvg;
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(processedSvg, "text/html");
+            const svgElement = svgDoc.body.firstChild;
+            if (svgElement) {
+              preview.appendChild(svgElement);
+            }
           } catch (error) {
             console.error(`Failed to read SVG ${filePath}:`, error);
-
-            preview.innerHTML =
-              '<div style="color: var(--text-muted); font-size: 24px;">📄</div>';
+            preview.createEl("div", { text: "📄" });
           }
 
           const nameEl = card.createEl("div", {
-            cls: "icon-name",
+            cls: "my-svgs-icon-name",
             text: iconName,
           });
 
           const copyBtn = card.createEl("button", {
-            cls: "copy-button",
+            cls: "my-svgs-copy-button",
             text: "Copy",
           });
 
@@ -512,36 +508,30 @@ class SvgIconsSettingTab extends PluginSettingTab {
                 new Notice(`Copied: ${iconName}`);
               });
           });
-
-          card.addEventListener("mouseenter", () => {
-            card.style.transform = "translateY(-2px)";
-          });
-
-          card.addEventListener("mouseleave", () => {
-            card.style.transform = "translateY(0)";
-          });
         } catch (error) {
           console.error(`Failed to process icon ${filePath}:`, error);
 
-          const errorCard = grid.createEl("div", { cls: "icon-card error" });
-          errorCard.innerHTML = `
-            <div class="icon-preview">❌</div>
-            <div class="icon-name">Error loading ${fileName}</div>
-          `;
+          const errorCard = grid.createEl("div", {
+            cls: "my-svgs-icon-card my-svgs-error",
+          });
+          errorCard.createEl("div", {
+            cls: "my-svgs-icon-preview",
+            text: "❌",
+          });
+          errorCard.createEl("div", {
+            cls: "my-svgs-icon-name",
+            text: `Error loading ${fileName}`,
+          });
         }
       }
-
-      refreshBtn.addEventListener("click", () => {
-        container.innerHTML = "";
-        this.displayIconsGrid(container);
-      });
     } catch (error) {
       console.error("Error displaying icons grid:", error);
-      container.innerHTML = `
-        <div class="error-message">
-          <p>Error loading icons: ${error.message}</p>
-        </div>
-      `;
+      const errorMsg = container.createEl("div", {
+        cls: "my-svgs-error-message",
+      });
+      errorMsg.createEl("p", {
+        text: `Error loading icons: ${error.message}`,
+      });
     }
   }
 }
