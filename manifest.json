@@ -2,7 +2,7 @@
   "id": "my-svgs",
   "name": "My SVGs",
   "author": "Omar Badawy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "1.9.0",
   "description": "Registers your own SVGs into the global icon library for use with other plugins or however you want.",
   "authorUrl": "https://github.com/ce-omarbadawy",
