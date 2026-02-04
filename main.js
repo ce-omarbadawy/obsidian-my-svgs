@@ -10,6 +10,7 @@ const {
 module.exports = class SvgIconsPlugin extends Plugin {
   settings = {
     iconPrefix: "my-",
+    customFolderPath: "",
   };
 
   async onload() {
@@ -22,31 +23,32 @@ module.exports = class SvgIconsPlugin extends Plugin {
 
   async loadPluginIcons() {
     try {
-      const iconsPath = normalizePath(`${this.manifest.dir}/icons`);
+      let iconsPath = normalizePath(`${this.manifest.dir}/icons`);
+      if (this.settings.customFolderPath.trim() !== "") {
+        const customPath = this.settings.customFolderPath.trim();
+        iconsPath = normalizePath(customPath);
+      }
 
       const dirExists = await this.app.vault.adapter.exists(iconsPath);
       if (!dirExists) {
-        console.log(`Icons directory does not exist: ${iconsPath}`);
+        console.warn(`Icons directory does not exist: ${iconsPath}`);
         return;
       }
 
-      const files = await this.app.vault.adapter.list(iconsPath);
+      const svgFiles = await this.getSvgFilesInFolder(iconsPath);
 
-      const svgFiles = files.files.filter((file) => file.endsWith(".svg"));
-
-      if (svgFiles.length === 0) {
-        console.log(`No SVG files found in: ${iconsPath}`);
+      if (!svgFiles || svgFiles.length === 0) {
+        console.warn(`No SVG files found in: ${iconsPath}`);
         return;
       }
 
       for (const filePath of svgFiles) {
         try {
           const content = await this.app.vault.adapter.read(filePath);
-
-          const fileName = filePath.split("/").pop().replace(".svg", "");
-
+          const pathParts = filePath.replace(iconsPath, "").split("/").filter(x => x.trim().length > 0);
+          const baseName = pathParts.pop().replace(".svg", "");
+          const fileName = pathParts.length ? `${pathParts.join("-")}-${baseName}` : baseName;
           const iconName = `${this.settings.iconPrefix}${fileName}`;
-
           const processedSvg = this.processSvg(content);
           addIcon(iconName, processedSvg);
         } catch (error) {
@@ -241,8 +243,34 @@ module.exports = class SvgIconsPlugin extends Plugin {
       console.error("Reload error:", error);
     }
   }
+  async getSvgFilesInFolder(folderPath) {
+    const svgFiles = [];
+    try {
+      const list = await this.app.vault.adapter.list(folderPath);
 
-  onunload() {}
+      // Collect SVG files in this folder
+      if (list && Array.isArray(list.files)) {
+        svgFiles.push(...list.files.filter((f) => f.toLowerCase().endsWith(".svg")));
+      }
+
+      // Recurse into subfolders. Some adapters return 'directories' and some 'folders'.
+      const directories = (list && (list.directories || list.folders)) || [];
+      for (const dir of directories) {
+        try {
+          const nested = await this.getSvgFilesInFolder(dir);
+          svgFiles.push(...nested);
+        } catch (err) {
+          console.error(`Failed to list directory ${dir}:`, err);
+        }
+      }
+    } catch (err) {
+      console.error(`Error reading folder ${folderPath}:`, err);
+    }
+
+    return svgFiles;
+  }
+
+  onunload() { }
 };
 
 class SvgIconsSettingTab extends PluginSettingTab {
@@ -273,6 +301,24 @@ class SvgIconsSettingTab extends PluginSettingTab {
             this.plugin.settings.iconPrefix = value;
             await this.plugin.saveSettings();
           }),
+      );
+
+    new Setting(containerEl)
+      .setName("Custom icons folder path")
+      .setDesc(
+        "Optional: Specify a custom folder path for your SVG icons (relative to vault root). Leave blank to use the default plugin icons folder.",
+      )
+      .addText((text) =>
+        text
+          .setPlaceholder("")
+          .setValue(this.plugin.settings.customFolderPath)
+          .onChange(async (value) => {
+            this.plugin.settings.customFolderPath = value;
+            await this.plugin.saveSettings();
+          })
+          .inputEl.onblur = () => {
+            this.display();
+          },
       );
 
     const instructionsSection = containerEl.createEl("div", {
@@ -357,10 +403,15 @@ class SvgIconsSettingTab extends PluginSettingTab {
     this.displayIconsGrid(gridContainer);
   }
 
+
+
   async displayIconsGrid(container) {
     try {
-      const iconsPath = normalizePath(`${this.plugin.manifest.dir}/icons`);
-
+      let iconsPath = normalizePath(`${this.plugin.manifest.dir}/icons`);
+      if (this.plugin.settings.customFolderPath.trim() !== "") {
+        const customPath = this.plugin.settings.customFolderPath.trim();
+        iconsPath = normalizePath(customPath);
+      }
       const dirExists = await this.app.vault.adapter.exists(iconsPath);
       if (!dirExists) {
         const errorMsg = container.createEl("div", {
@@ -375,8 +426,8 @@ class SvgIconsSettingTab extends PluginSettingTab {
         return;
       }
 
-      const files = await this.app.vault.adapter.list(iconsPath);
-      const svgFiles = files.files.filter((file) => file.endsWith(".svg"));
+      const svgFiles = await this.plugin.getSvgFilesInFolder(iconsPath);
+
 
       if (svgFiles.length === 0) {
         const errorMsg = container.createEl("div", {
@@ -460,7 +511,9 @@ class SvgIconsSettingTab extends PluginSettingTab {
 
       for (const filePath of svgFiles) {
         try {
-          const fileName = filePath.split("/").pop().replace(".svg", "");
+          const pathParts = filePath.replace(iconsPath, "").split("/").filter(x => x.trim().length > 0);
+          const baseName = pathParts.pop().replace(".svg", "");
+          const fileName = pathParts.length ? `${pathParts.join("-")}-${baseName}` : baseName;
           const iconName = `${this.plugin.settings.iconPrefix}${fileName}`;
 
           const card = grid.createEl("div", { cls: "my-svgs-icon-card" });
